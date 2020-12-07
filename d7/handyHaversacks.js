@@ -35,8 +35,6 @@ const createStorage = (arr) => {
     return storage;
 };
 
-// console.log(getBagsArr(inputs[207]));
-
 let storage = createStorage(input);
 let exStorage = createStorage(example);
 
@@ -82,19 +80,16 @@ const findContainsGold = () => {
 
 
 
-const getBagsInGoldBag = () => {
-    const findBagsInBag = (string) => {
-        let item = storage[string];
-        let sum = 0;
-        for (let i = 0; i < item.children.length; i++) {
-            let splitArr = item.children[i].split(/(\d+)/).filter(Boolean);
-            let ammount = Number(splitArr[0]);
-            let bag = splitArr[1].trim();
-            sum += (ammount + (ammount * findBagsInBag(bag)));
-        }
-        return sum;
-    };
-    return findBagsInBag('shiny gold');
+const getBagsInBag = (string) => {
+    let item = storage[string];
+    let sum = 0;
+    for (let i = 0; i < item.children.length; i++) {
+        let splitArr = item.children[i].split(/(\d+)/).filter(Boolean);
+        let ammount = Number(splitArr[0]);
+        let bag = splitArr[1].trim();
+        sum += (ammount + (ammount * getBagsInBag(bag)));
+    }
+    return sum;
 };
 
-console.log(getBagsInGoldBag());
+console.log(getBagsInBag('shiny gold'));
