@@ -1,12 +1,13 @@
-const input = require('./input');
-const inputs = input.input;
+const inputs = require('./input');
+const input = inputs.input;
+const example = inputs.example;
 
 const getBagsArr = (string) => {
     let regex = /(bag+?)(s\b|\b)/gi;
     let numRegex = /\d/gi;
     let newString = string
         .replace(regex, '')
-        .replace(numRegex, '')
+        // .replace(numRegex, '')
         .replace('.', '')
         .replace('contain', ',')
         .split(',');
@@ -34,11 +35,12 @@ const createStorage = (arr) => {
     return storage;
 };
 
-// console.log(getBagsArr(inputs[87]));
+// console.log(getBagsArr(inputs[207]));
+
+let storage = createStorage(input);
+let exStorage = createStorage(example);
 
 const findContainsGold = () => {
-    let storage = createStorage(inputs);
-
     const chilrenHelper = (child) => {
         if (child === 'shiny gold') {
             return true;
@@ -76,4 +78,23 @@ const findContainsGold = () => {
     return count;
 };
 
-console.log(findContainsGold());
+// console.log(findContainsGold());
+
+
+
+const getBagsInGoldBag = () => {
+    const findBagsInBag = (string) => {
+        let item = storage[string];
+        let sum = 0;
+        for (let i = 0; i < item.children.length; i++) {
+            let splitArr = item.children[i].split(/(\d+)/).filter(Boolean);
+            let ammount = Number(splitArr[0]);
+            let bag = splitArr[1].trim();
+            sum += (ammount + (ammount * findBagsInBag(bag)));
+        }
+        return sum;
+    };
+    return findBagsInBag('shiny gold');
+};
+
+console.log(getBagsInGoldBag());
