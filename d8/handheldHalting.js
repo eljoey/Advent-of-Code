@@ -9,31 +9,21 @@ const handheldHalting = (arr) => {
     let cache = {};
 
     while (index < arr.length) {
-        if (cache[index]) {
-            return 0;
-        }
+        if (cache[index]) return false;
+
         let [instruction, ammount] = arr[index].split(' ');
-        let sign = ammount[0];
-        ammount = ammount.slice(1);
         cache[index] = true;
 
         if (instruction === 'nop') {
             index++;
-        } else if (instruction === 'jmp') {
-            if (sign === '+') {
-                index += Number(ammount);
-            } else {
-                index -= Number(ammount);
-            }
-        } else {
-            if (sign === '+') {
-                count += Number(ammount);
-            } else {
-                count -= Number(ammount);
-            }
+        }
+        if (instruction === 'jmp') {
+            index += Number(ammount);
+        }
+        if (instruction === 'acc') {
+            count += Number(ammount);
             index++;
         }
-
     }
     return count;
 };
@@ -49,9 +39,7 @@ const handleChanges = (arr) => {
 
             let doesntLoop = handheldHalting(arr);
 
-            if (!!doesntLoop) {
-                return doesntLoop;
-            }
+            if (!!doesntLoop) return doesntLoop;
 
             // change back
             arr[i] = `nop ${ammount}`;
@@ -61,16 +49,13 @@ const handleChanges = (arr) => {
 
             let doesntLoop = handheldHalting(arr);
 
-            if (!!doesntLoop) {
-                return doesntLoop;
-            }
+            if (!!doesntLoop) return doesntLoop;
 
             //change back
             arr[i] = `jmp ${ammount}`;
         }
-
     }
-    return false;
+    return 'YOU DONE MESSED UP A ARON';
 };
 
 console.log(handleChanges(input));
