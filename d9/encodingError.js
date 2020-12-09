@@ -18,7 +18,6 @@ const findFirstWrongNum = (arr) => {
             if (cache[arr[i] - num]) {
                 found = true;
             }
-
         }
 
         if (found) {
@@ -30,4 +29,46 @@ const findFirstWrongNum = (arr) => {
     }
 };
 
-console.log(findFirstWrongNum(input));
+const p2 = (arr) => {
+    let invalidNum = findFirstWrongNum(arr);
+
+    let nums = [];
+    let sum = 0;
+
+    let startIndex = 0;
+    let index = 0;
+    while (startIndex < arr.length) {
+        sum += Number(arr[index]);
+        nums.push(arr[index]);
+
+        if (sum == invalidNum) {
+            return sumMinMax(nums);
+        }
+        if (sum > invalidNum) {
+            sum = 0;
+            nums = [];
+            index = startIndex;
+            startIndex++;
+        }
+
+        index++;
+    }
+    return 'uh oh';
+};
+
+const sumMinMax = (arr) => {
+    let min = Infinity;
+    let max = 0;
+    for (let i = 0; i < arr.length; i++) {
+        let num = Number(arr[i]);
+        if (num < min) {
+            min = num;
+        }
+        if (num > max) {
+            max = num;
+        }
+    }
+    return min + max;
+};
+
+console.log(p2(input));
