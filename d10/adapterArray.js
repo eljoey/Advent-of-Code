@@ -1,6 +1,7 @@
 let { example, input } = require('./input');
 
 const p1 = (arr) => {
+    arr.push(0);
     arr.sort((a, b) => a - b);
     // 3 starts at one because gary's a cheater
     let gary = {
@@ -10,9 +11,6 @@ const p1 = (arr) => {
 
     for (let i = 0; i < arr.length; i++) {
         let diff = arr[i] - arr[i - 1];
-        if (i === 0) {
-            diff = arr[i];
-        }
 
         if (diff === 1) {
             gary[1]++;
@@ -23,10 +21,10 @@ const p1 = (arr) => {
     }
     return gary[1] * gary[3];
 };
+
 const p2 = (arr) => {
+    arr.push(0);
     arr.sort((a, b) => a - b);
-    // is this retarded? its gotta be, but it works so yolo
-    arr[-1] = 0;
     let cache = {};
 
     const helper = (index) => {
@@ -55,7 +53,6 @@ const p2 = (arr) => {
 
     };
 
-    return helper(-1);
+    return helper(0);
 };
-
 console.log(p2(input));
