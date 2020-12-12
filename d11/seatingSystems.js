@@ -2,22 +2,22 @@ let { example, input } = require('./input');
 
 const seatsOccupied = (input) => {
     let current = getMatrix(input);
-    let prev = [];
+    let copy;
     let occupied = 0;
 
-    while (!checkEqual(current, prev)) {
-        prev = current;
+    while (!equalCheck(current, copy)) {
+        copy = current;
         current = [];
 
-        for (let i = 0; i < prev.length; i++) {
+        for (let i = 0; i < copy.length; i++) {
             let row = [];
-            for (let j = 0; j < prev[0].length; j++) {
+            for (let j = 0; j < copy[0].length; j++) {
                 let occupiedBefore = false;
-                if (prev[i][j] === '#') {
+                if (copy[i][j] === '#') {
                     occupiedBefore = true;
                 }
 
-                let seat = whatShouldIBe(prev, i, j);
+                let seat = whatShouldIBe(copy, i, j);
                 row.push(seat);
 
                 if (occupiedBefore && seat === 'L') {
@@ -44,7 +44,7 @@ const getMatrix = (arr) => {
     return matrix;
 };
 
-const checkEqual = (first, second) => {
+const equalCheck = (first, second) => {
     return JSON.stringify(first) === JSON.stringify(second);
 };
 
@@ -72,7 +72,6 @@ const whatShouldIBe = (arr, row, col) => {
         return '#';
     }
 
-    // seat is unchanged
     return curSeat;
 };
 
