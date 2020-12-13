@@ -1,62 +1,74 @@
 let { example, input } = require('./input');
 
 const p1 = (arr) => {
-    let x = 0;
-    let y = 0;
-    let shipFacing = 0;
-    let directions = {
-        0: 'E',
-        270: 'S',
-        180: 'W',
-        90: 'N'
+    let ship = {
+        x: 0,
+        y: 0
     };
+    let shipFacing = 0;
+
 
     for (let i = 0; i < arr.length; i++) {
         let instruction = arr[i].slice(0, 1);
         let value = Number(arr[i].slice(1));
-        let turned = false;
 
-        if (instruction === 'L') {
-            shipFacing = (shipFacing + value) % 360;
-
-            turned = true;
-        }
-        if (instruction === 'R') {
-            shipFacing = (shipFacing - value) % 360;
-            while (shipFacing < 0) {
+        switch (instruction) {
+            case 'L':
+                shipFacing = (shipFacing + value) % 360;
+                break;
+            case 'R':
                 shipFacing += 360;
-            }
-            turned = true;
+                shipFacing = (shipFacing - value) % 360;
+                break;
+            case 'F':
+            case 'N':
+            case 'E':
+            case 'S':
+            case 'W':
+                ship = moveShip(ship, shipFacing, instruction, value);
+                break;
+            default:
+                break;
         }
-
-        if (!turned) {
-            let move = instruction;
-            if (instruction === 'F') {
-                move = directions[shipFacing];
-            }
-
-            switch (move) {
-                case 'N':
-                    y += value;
-                    break;
-                case 'S':
-                    y -= value;
-                    break;
-                case 'E':
-                    x += value;
-                    break;
-                case 'W':
-                    x -= value;
-                    break;
-                default:
-                    break;
-            }
-        }
-
     }
-    let manhattanDis = Math.abs(x) + Math.abs(y);
+    let x = Math.abs(ship['x']);
+    let y = Math.abs(ship['y']);
+    let manhattanDis = x + y;
 
     return manhattanDis;
+};
+
+const moveShip = (ship, shipFacing, instruction, value) => {
+    let directions = {
+        0: 'E',
+        90: 'N',
+        180: 'W',
+        270: 'S',
+
+    };
+    let move = instruction;
+
+    if (instruction === 'F') {
+        move = directions[shipFacing];
+    }
+
+    switch (move) {
+        case 'N':
+            ship['y'] += value;
+            break;
+        case 'E':
+            ship['x'] += value;
+            break;
+        case 'S':
+            ship['y'] -= value;
+            break;
+        case 'W':
+            ship['x'] -= value;
+            break;
+        default:
+            break;
+    }
+    return ship;
 };
 
 
@@ -88,11 +100,11 @@ const p2 = (arr) => {
             case 'N':
                 wp['y'] += value;
                 break;
-            case 'S':
-                wp['y'] -= value;
-                break;
             case 'E':
                 wp['x'] += value;
+                break;
+            case 'S':
+                wp['y'] -= value;
                 break;
             case 'W':
                 wp['x'] -= value;
@@ -102,7 +114,11 @@ const p2 = (arr) => {
                 break;
         }
     }
-    let manhattanDis = Math.abs(ship['x']) + Math.abs(ship['y']);
+
+    let x = Math.abs(ship['x']);
+    let y = Math.abs(ship['y']);
+    let manhattanDis = x + y;
+
     return manhattanDis;
 };
 
@@ -150,5 +166,5 @@ const rotateWp = (wp, instruction, value) => {
 
 };
 
-// console.log(p1(input));
+console.log(p1(input));
 console.log(p2(input));
