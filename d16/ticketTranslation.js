@@ -12,7 +12,7 @@ const formatInput = (input) => {
         }
 
         if (input[i] === 'your ticket:') {
-            yourTicket = input[i + 1];
+            yourTicket = input[i + 1].split(',');
             i += 2;
             continue;
         }
@@ -42,23 +42,32 @@ const formatInput = (input) => {
 
     return [fields, yourTicket, nearby];
 };
+
+
 /*
-{
-  fields: {
-    class: [ '1-3', '5-7' ],
-    row: [ '6-11', '33-44' ],
-    seat: [ '13-40', '45-50' ]
-  },
-  yourTicket: '7,1,14',
-  nearby: [ '7,3,47', '40,4,50', '55,2,20', '38,6,12' ]
-}
+fields = {
+  class: [ 1, 2, 3, 5, 6, 7 ],
+  row: [
+     6,  7,  8,  9, 10, 11, 33,
+    34, 35, 36, 37, 38, 39, 40,
+    41, 42, 43, 44
+  ],
+  seat: [
+    13, 14, 15, 16, 17, 18, 19, 20, 21,
+    22, 23, 24, 25, 26, 27, 28, 29, 30,
+    31, 32, 33, 34, 35, 36, 37, 38, 39,
+    40, 45, 46, 47, 48, 49, 50
+  ]
+} 
+yourTicket = [ '7', '1', '14' ]
+nearbyTicket =  [ '7,3,47', '40,4,50', '55,2,20', '38,6,12' ]
 */
 
 const p1 = (input) => {
-    const [fields, yourTicket, nearby] = formatInput(input);
+    const [fields, yourTicket, nearbyTicket] = formatInput(input);
     let errorRate = 0;
-    for (let i = 0; i < nearby.length; i++) {
-        let ticket = nearby[i].split(',');
+    for (let i = 0; i < nearbyTicket.length; i++) {
+        let ticket = nearbyTicket[i].split(',');
 
         for (let j = 0; j < ticket.length; j++) {
             let value = Number(ticket[j]);
@@ -79,10 +88,29 @@ const p1 = (input) => {
 };
 
 const p2 = (input) => {
-    const [fields, yourTicket, nearby] = formatInput(input);
+    const [fields, yourTicket, nearbyTicket] = formatInput(input);
+    let validTickets = findValidTickets(fields, nearbyTicket);
+    let fieldsHash = createFieldsHash(validTickets);
+    let fieldsArr = findFieldsOrder(fields, fieldsHash);
+
+    let sum = 1;
+    for (let i = 0; i < yourTicket.length; i++) {
+        const value = yourTicket[i];
+        const field = fieldsArr[i];
+
+        if (field.includes('departure')) {
+            sum *= value;
+        }
+    }
+
+    return sum;
+
+};
+
+const findValidTickets = (fields, ticketsArr) => {
     let validTickets = [];
-    for (let i = 0; i < nearby.length; i++) {
-        let ticket = nearby[i].split(',');
+    for (let i = 0; i < ticketsArr.length; i++) {
+        let ticket = ticketsArr[i].split(',');
         let valid = true;
 
         for (let j = 0; j < ticket.length; j++) {
@@ -105,9 +133,13 @@ const p2 = (input) => {
         }
     }
 
+    return validTickets;
+};
+
+const createFieldsHash = (tickets) => {
     let fieldsHash = {};
-    for (let i = 0; i < validTickets.length; i++) {
-        let ticketFields = validTickets[i];
+    for (let i = 0; i < tickets.length; i++) {
+        let ticketFields = tickets[i];
 
         for (let j = 0; j < ticketFields.length; j++) {
             if (fieldsHash[j]) {
@@ -117,35 +149,28 @@ const p2 = (input) => {
             }
         }
     }
+
+    return fieldsHash;
+};
+
+const findFieldsOrder = (fields, hash) => {
     let fieldsArr = [];
-    while (Object.keys(fieldsHash).length > 0) {
-        for (const key in fieldsHash) {
+    while (Object.keys(hash).length > 0) {
+        for (const key in hash) {
             let matchingFields = [];
-            matchingFields = [...findField(fields, fieldsHash[key])];
+            matchingFields = [...findValidFields(fields, hash[key])];
             if (matchingFields.length === 1) {
-                delete fieldsHash[key];
+                delete hash[key];
                 delete fields[matchingFields[0]];
                 fieldsArr[key] = matchingFields[0];
             }
         }
     }
 
-    const yourTicketArr = yourTicket.split(',');
-    let sum = 1;
-    for (let i = 0; i < yourTicketArr.length; i++) {
-        const value = Number(yourTicketArr[i]);
-        const field = fieldsArr[i];
-
-        if (field.includes('departure')) {
-            sum *= value;
-        }
-    }
-
-    return sum;
-
+    return fieldsArr;
 };
 
-const findField = (fields, arr) => {
+const findValidFields = (fields, arr) => {
     let possible = [];
     for (const key in fields) {
         let isField = false;
