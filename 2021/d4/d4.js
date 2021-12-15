@@ -13,10 +13,6 @@ const isBingo = (board) => {
             return true;
         }
     }
-    // diagonal check
-    // if (diagonalCheck(board)) {
-    //     return true;
-    // }
 
     return false;
 };
@@ -43,30 +39,6 @@ const verticalCheck = (card, index) => {
     }
 
     return result;
-};
-
-const diagonalCheck = (card) => {
-    // top left start
-    let topLeftResult = true;
-    let topLeftIndex = 0;
-    for (let i = 0; i < card[0].length; i++) {
-        if (card[i][topLeftIndex] !== 'X') {
-            topLeftResult = false;
-        }
-        topLeftIndex++;
-    }
-
-    // bot left start
-    let botLeftResult = true;
-    let botLeftIndex = 0;
-    for (let i = card[0].length - 1; i >= 0; i--) {
-        if (card[i][botLeftIndex] !== 'X') {
-            botLeftResult = false;
-        }
-        botLeftIndex++;
-    }
-
-    return topLeftResult || botLeftResult;
 };
 
 const parseData = (data) => {
@@ -150,8 +122,8 @@ const p2 = (data) => {
             }
 
             if (bingos.size === cards.length) {
-                let lastBingoCard = Array.from(bingos).pop();
-                return getScore(cards[lastBingoCard], number);
+                let lastBingoIndex = Array.from(bingos).pop();
+                return getScore(cards[lastBingoIndex], number);
             }
         }
     }
