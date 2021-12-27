@@ -22,10 +22,7 @@ const helperP1 = (visited, dict) => {
     const len = visited.length;
     const curNode = visited[len - 1];
 
-    if (!dict[curNode]) return 0;
     if (curNode === 'end') return 1;
-    // exit on loop
-    if (visited[len - 2] === visited[len - 4] && curNode === visited[len - 3]) return 0;
 
     let count = 0;
     for (let i = 0; i < dict[curNode].length; i++) {
@@ -36,6 +33,7 @@ const helperP1 = (visited, dict) => {
         if (node === 'start') {
             continue;
         }
+
         const result = helperP1([...visited, node], dict);
         count += result;
     }
