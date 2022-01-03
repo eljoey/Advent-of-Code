@@ -120,12 +120,6 @@ const p1 = (input) => {
     return sumOfVersions(packets);
 };
 
-const arrayDepth = (arr) => {
-    return Array.isArray(arr) ?
-        1 + Math.max(...arr.map(arrayDepth)) :
-        0;
-};
-
 const literalValue = (str) => {
     let binaryString = '';
     let index = 6;
@@ -142,59 +136,41 @@ const literalValue = (str) => {
 };
 
 const mathString = (arr) => {
-    // let depth = arrayDepth(arr);
     let result = [];
     const key = {
         '000': '+',
         '001': '*',
         '010': 'min',
         '011': 'max',
-        '100': 'literal',
         '101': 'greater',
         '110': 'less',
         '111': 'equal'
     };
-    // console.log(depth);
-    // if (depth === 1) {
-    //     let digits = [];
-    //     for (let i = 0; i < arr.length; i++) {
-    //         digits.push(literalValue(arr[i]));
-    //     }
-    //     return digits;
-    // } else {
-    //     const typeId = arr[0].slice(3, 6);
-    //     console.log(typeId);
-    //     if (typeId === '100') {
-    //         result.push(literalValue(arr[0]));
-    //     } else {
-    //         result.push(key[typeId]);
-    //     }
-    //     result.push(mathString(arr.slice(1)));
-
-    // }
-    // console.log('RESULT 2', result);
 
     for (let i = 0; i < arr.length; i++) {
         const element = arr[i];
 
         if (typeof element === 'string') {
             const typeId = element.slice(3, 6);
+
             if (typeId === '100') {
                 result.push(literalValue(element));
             } else {
                 result.push(key[typeId]);
             }
+
         } else {
             result.push(mathString(arr[i]));
         }
     }
-
 
     return result;
 };
 
 const doMath = (arr) => {
     let instruction = arr[0];
+    let result = 0;
+
     if (instruction === '+') {
         let sum = 0;
         for (let i = 0; i < arr[1].length; i++) {
@@ -206,8 +182,8 @@ const doMath = (arr) => {
 
             sum += element;
         }
-        // console.log('SUM: ', sum);
-        return sum;
+
+        result = sum;
     } else if (instruction === '*') {
         let product = 1;
         for (let i = 0; i < arr[1].length; i++) {
@@ -219,8 +195,8 @@ const doMath = (arr) => {
 
             product *= element;
         }
-        // console.log('PRODUCT: ', product);
-        return product;
+
+        result = product;
     } else if (instruction === 'min') {
         let min = Infinity;
         for (let i = 0; i < arr[1].length; i++) {
@@ -231,8 +207,8 @@ const doMath = (arr) => {
             }
             min = Math.min(min, element);
         }
-        // console.log('MIN: ', min);
-        return min;
+
+        result = min;
     } else if (instruction === 'max') {
         let max = Number.NEGATIVE_INFINITY;
         for (let i = 0; i < arr[1].length; i++) {
@@ -243,8 +219,8 @@ const doMath = (arr) => {
             }
             max = Math.max(max, element);
         }
-        // console.log('MAX: ', max);
-        return max;
+
+        result = max;
     } else if (instruction === 'greater') {
         let num1 = arr[1][0];
         let num2 = arr[1][1];
@@ -253,11 +229,10 @@ const doMath = (arr) => {
             num1 = doMath(arr[1][0]);
         }
         if (typeof num2 !== 'number') {
-            num2 = doMath(arr[1][0]);
+            num2 = doMath(arr[1][1]);
         }
 
-        // console.log('GREATER: ', num1, num2);
-        return num1 > num2 ? 1 : 0;
+        result = num1 > num2 ? 1 : 0;
     } else if (instruction === 'less') {
         let num1 = arr[1][0];
         let num2 = arr[1][1];
@@ -266,11 +241,10 @@ const doMath = (arr) => {
             num1 = doMath(arr[1][0]);
         }
         if (typeof num2 !== 'number') {
-            num2 = doMath(arr[1][0]);
+            num2 = doMath(arr[1][1]);
         }
 
-        // console.log('LESS: ', num1, num2);
-        return num1 < num2 ? 1 : 0;
+        result = num1 < num2 ? 1 : 0;
     } else if (instruction === 'equal') {
         let num1 = arr[1][0];
         let num2 = arr[1][1];
@@ -279,21 +253,20 @@ const doMath = (arr) => {
             num1 = doMath(arr[1][0]);
         }
         if (typeof num2 !== 'number') {
-            num2 = doMath(arr[1][0]);
+            num2 = doMath(arr[1][1]);
         }
 
-        // console.log('EQUAL: ', num1, num2);
-        return num1 === num2 ? 1 : 0;
+        result = num1 === num2 ? 1 : 0;
     }
+
+    return result;
 };
 
 const p2 = (input) => {
     const binaryStr = hexToBinary(input);
     let packets = getPackets(binaryStr)[0];
-    // console.log(JSON.stringify(packets));
-
     let formula = mathString(packets);
-    // console.log(JSON.stringify(formula));
+
     return doMath(formula);
 };
 
