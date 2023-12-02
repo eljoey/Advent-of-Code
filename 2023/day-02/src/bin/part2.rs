@@ -1,5 +1,5 @@
 use std::collections::HashMap;
-
+println!("test");
 fn main() {
     let input: &str = include_str!("./input1.txt");
     let output = part1(input);
