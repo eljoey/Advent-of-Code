@@ -49,8 +49,8 @@ const p2 = (inputs) => {
         const input = splitInput[i];
         let safe = false
 
-        for (let i = 0; i < input.length; i++) {
-            const removed = [...input.slice(0, i), ...input.slice(i + 1, input.length)]
+        for (let j = 0; j < input.length; j++) {
+            const removed = [...input.slice(0, j), ...input.slice(j + 1, input.length)]
 
             if (safeCheck(input)) {
                 safe = true

@@ -8,10 +8,6 @@ const getSum = (val) => {
     let num1 = rep3[0]
     let num2 = rep3[1]
 
-    if (num1 === undefined || num2 === undefined) {
-        return 0
-    }
-
     const sum = num1 * num2
 
     return sum
@@ -52,16 +48,11 @@ const p2 = (inputs) => {
     for (let i = 0; i < match.length; i++) {
         if (match[i] === doStr) {
             action = true
-            continue
-        }
-        if (match[i] === dontStr) {
+        } else if (match[i] === dontStr) {
             action = false
-            continue
+        } else if (action) {
+            res += getSum(match[i])
         }
-        if (!action) continue
-
-        res += getSum(match[i])
-
     }
     return res
 }
